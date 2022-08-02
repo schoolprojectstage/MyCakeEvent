@@ -14,7 +14,7 @@ class OrderLine
     private int $id;
 
     #[ORM\ManyToOne(targetEntity: Order::class, cascade: ['persist', 'remove'], inversedBy: 'orderLines')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Order $orderReference;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -30,7 +30,7 @@ class OrderLine
     private int $quantity;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'ordersFromBuyers')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private User $seller;
 
     #[ORM\ManyToOne(targetEntity: Address::class, inversedBy: 'orderFromSeller')]
