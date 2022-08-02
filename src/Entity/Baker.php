@@ -27,6 +27,7 @@ class Baker
     private ?string $commercialName;
 
     #[ORM\OneToMany(mappedBy: 'baker', targetEntity: Cake::class, orphanRemoval: true)]
+    #[ORM\JoinColumn(onDelete: "CASCADE")]
     private Collection $cakes;
 
     #[ORM\Column(type: 'string', length: 255)]

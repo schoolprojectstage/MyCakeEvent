@@ -15,11 +15,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use DateTime;
 
-#[Route('/patissier', name: 'app_baker')]
+#[Route('/patissier', name: 'app_baker_')]
 class BakerController extends AbstractController
 {
     #[IsGranted('ROLE_ADMIN')]
-    #[Route('/', name: '_index')]
+    #[Route('/', name: 'index')]
     public function index(BakerRepository $bakerRepository): Response
     {
         $bakers = $bakerRepository->findAll();
@@ -28,7 +28,7 @@ class BakerController extends AbstractController
         ]);
     }
 
-    #[Route('/nouveau', name: '_form')]
+    #[Route('/nouveau', name: 'form')]
     public function newBaker(Request $request, BakerRepository $bakerRepository): Response
     {
         $baker = new Baker();
@@ -44,7 +44,22 @@ class BakerController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: '_list')]
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
+    public function delete(Request $request, Baker $baker, BakerRepository $bakerRepository): Response
+    {
+        if (is_string($request->request->get('token')) || is_null($request->request->get('token'))) {
+            if ($this->isCsrfTokenValid('delete' . $baker->getId(), $request->request->get('token'))) {
+                $bakerRepository->remove($baker, true);
+            } else {
+                throw new Exception(message: 'Impossible de supprimer le patissier.');
+            }
+        }
+
+        return $this->redirectToRoute('app_baker_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}', name: 'list')]
     public function detail(Baker $baker): Response
     {
         return $this->render('baker/show.html.twig', [
@@ -52,7 +67,7 @@ class BakerController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/modifier', name: '_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/modifier', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Baker $baker, BakerRepository $bakerRepository): Response
     {
         // initializing modifyForm in case conditions are not met
@@ -88,21 +103,5 @@ class BakerController extends AbstractController
             'baker' => $baker,
             'modifyForm' => $modifyForm,
         ]);
-    }
-
-    // TODO: do we keep this here or do we move it in security.yaml?
-    #[IsGranted('ROLE_ADMIN')]
-    #[Route('/{id}', name: '_delete', methods: ['POST'])]
-    public function delete(Request $request, Baker $baker, BakerRepository $bakerRepository): Response
-    {
-        if (is_string($request->request->get('_token')) || is_null($request->request->get('_token'))) {
-            if ($this->isCsrfTokenValid('_delete' . $baker->getId(), $request->request->get('_token'))) {
-                $bakerRepository->remove($baker, true);
-            } else {
-                throw new Exception(message: 'token should be string or null');
-            }
-        }
-
-        return $this->redirectToRoute('app_baker_index', [], Response::HTTP_SEE_OTHER);
     }
 }
