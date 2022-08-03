@@ -29,7 +29,6 @@ class OrderController extends AbstractController
             $address = 'Aucune adresse renseignée.';
         }
 
-
         $total = $session->get('total', []);
         $datacart = $session->get('datacart');
 

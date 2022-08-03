@@ -26,7 +26,9 @@ class CakeType extends AbstractType
                     new Length([
                         'max' => 255,
                         'maxMessage' => 'Le champ nom doit comporter au maximum {{ limit }} caractères.'
-                    ])
+                    ]),
+                    'required' => true,
+
                 ]
             ])
             ->add('description', TextareaType::class, [
@@ -43,10 +45,10 @@ class CakeType extends AbstractType
             ->add('ingredients', TextType::class, [
                 'label' => 'Goûts et saveurs',
                 'required' => false
-                ])
+            ])
             ->add('allergens', TextType::class, [
                 'label' => 'Liste des allergènes',
-                'required'   => false,
+                'required' => false,
                 'empty_data' => ''])
             ->add('price', NumberType::class, [
                 'label' => 'Prix*',
@@ -61,7 +63,7 @@ class CakeType extends AbstractType
             ])
             ->add('size', TextType::class, [
                 'label' => 'Nombre de parts / personnes*'
-                ])
+            ])
             ->add('category', ChoiceType::class, [
                 'label' => 'Type*',
                 'choices' => [
@@ -77,9 +79,9 @@ class CakeType extends AbstractType
                 ],
                 'required' => true
             ])
-            ->add('availability', TextType::class, [
-                'label' => 'Délai minimum nécessaire entre une commande et son retrait*',
-                'required' => 'Le délai minimum est obligatoire'
+            ->add('availability', NumberType::class, [
+                'label' => 'Le délai minimum nécessaire entre une commande et son retrait*',
+                'required' => 'Le délai minimum est obligatoire',
             ]);
     }
 

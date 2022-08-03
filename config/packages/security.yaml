@@ -37,6 +37,7 @@ security:
         - { path: ^/espace-client, roles: [ ROLE_CUSTOMER, ROLE_ADMIN ] }
         - { path: ^/commande, roles: [ ROLE_CUSTOMER, ROLE_ADMIN ] }
         - { path: ^/patissier/*/modifier, roles: [ ROLE_BAKER, ROLE_ADMIN ] }
+        - { path: ^/patissier/*/delete, roles: ROLE_ADMIN }
         - { path: ^/gateau/nouveau, roles: [ ROLE_BAKER, ROLE_ADMIN ] }
         - { path: ^/gateau/*/modifier, roles: [ ROLE_BAKER, ROLE_ADMIN ] }
         # TODO: not sure about the next one

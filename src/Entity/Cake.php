@@ -63,7 +63,8 @@ class Cake
     private ?string $ingredients;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $availability = "Non renseigné";
+    #[Assert\GreaterThanOrEqual(7)]
+    private ?int $availability = 7;
 
     public function __construct()
     {
@@ -219,12 +220,12 @@ class Cake
         $this->ingredients = $ingredients;
     }
 
-    public function getAvailability(): ?string
+    public function getAvailability(): ?int
     {
         return $this->availability;
     }
 
-    public function setAvailability(?string $availability): self
+    public function setAvailability(?int $availability): self
     {
         $this->availability = $availability;
 

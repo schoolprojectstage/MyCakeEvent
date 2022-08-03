@@ -7,6 +7,7 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use http\Message;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
@@ -24,6 +25,7 @@ class Order
     private string $orderStatus = "Commande créée";
 
     #[ORM\Column(type: 'datetime', nullable: false)]
+    #[Assert\GreaterThanOrEqual('+7 days')]
     private ?DateTimeInterface $collectDate;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'ordersToSellers')]
