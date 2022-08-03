@@ -7,8 +7,11 @@ use App\Entity\Order;
 use App\Entity\User;
 use App\Repository\AddressRepository;
 use App\Repository\OrderRepository;
+use Exception;
 use App\Form\AddressType;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,10 +26,20 @@ class CustomerController extends AbstractController
         return $this->render('customer/index.html.twig');
     }
 
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin', name: 'admin_index')]
+    public function allCustomer(UserRepository $userRepository): Response
+    {
+        $roles = 'ROLE_CUSTOMER';
+        $users = $userRepository->findByRoles($roles);
+
+        return $this->render('customer/allCustomer.html.twig', [
+            'users' => $users]);
+    }
+
     #[Route('/profil', name: 'show')]
-    public function show(
-        AddressRepository $addressRepository,
-    ): Response {
+    public function show(AddressRepository $addressRepository): Response
+    {
         /** @var User $user */
         $user = $this->getUser();
         $userId = $user->getId();
@@ -40,9 +53,8 @@ class CustomerController extends AbstractController
     }
 
     #[Route('/commandes', name: 'orders')]
-    public function showOrders(
-        OrderRepository $orderRepository,
-    ): Response {
+    public function showOrders(OrderRepository $orderRepository): Response
+    {
         /** @var User $user */
         $user = $this->getUser();
         $userId = $user->getId();
@@ -55,8 +67,8 @@ class CustomerController extends AbstractController
     public function edit(
         Request $request,
         EntityManagerInterface $entityManager,
-        AddressRepository $addressRepository,
-    ): Response {
+        AddressRepository $addressRepository): Response
+    {
         $address = new Address();
         $form = $this->createForm(AddressType::class, $address);
         $form->handleRequest($request);
@@ -96,5 +108,20 @@ class CustomerController extends AbstractController
         }
 
         return $this->redirectToRoute('app_customer_orders');
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
+    public function delete(Request $request, User $user, UserRepository $userRepository): Response
+    {
+        if (is_string($request->request->get('token')) || is_null($request->request->get('token'))) {
+            if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('token'))) {
+                $userRepository->remove($user, true);
+            } else {
+                throw new Exception(message: "Impossible de supprimer l'utilisateur");
+            }
+        }
+
+        return $this->redirectToRoute('app_customer_admin_index', [], Response::HTTP_SEE_OTHER);
     }
 }
