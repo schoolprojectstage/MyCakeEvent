@@ -37,13 +37,15 @@ class OrderController extends AbstractController
             $order = $_POST['meetingTime'];
             date_default_timezone_set('Europe/Paris');
             $orderDate = date_create($order);
-            $now = date_create("now");
+            $now = date_create();
+            $dateVerification = date_add($now, date_interval_create_from_date_string("6 days"));
+
 
             if (!$orderDate instanceof DateTime || $orderDate == false) {
                 return $this->redirectToRoute('app_order_index');
             }
 
-            $diff = $orderDate->diff($now);
+            $diff = $orderDate->diff($dateVerification);
 
             if ($diff->invert == 0) {
                 $this->addFlash(
