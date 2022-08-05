@@ -8,6 +8,13 @@
         {% include "components/_adminnav.html.twig" %}
     </div>
     <h1 class="text-primary text-center mb-4">Clients</h1>
+    {% for category, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
     {% for user in users %}
     <div id="baker-card" class="container-fluid card mb-3">
         <div class="row m-3 g-{{ loop.index0 }}">

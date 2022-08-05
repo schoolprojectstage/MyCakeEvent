@@ -51,6 +51,7 @@ class BakerController extends AbstractController
         if (is_string($request->request->get('token')) || is_null($request->request->get('token'))) {
             if ($this->isCsrfTokenValid('delete' . $baker->getId(), $request->request->get('token'))) {
                 $bakerRepository->remove($baker, true);
+                $this->addFlash('success', "Le patissier à bien été supprimé.");
             } else {
                 throw new Exception(message: 'Impossible de supprimer le patissier.');
             }

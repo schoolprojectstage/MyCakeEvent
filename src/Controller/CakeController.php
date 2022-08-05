@@ -20,7 +20,6 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Validator\Constraints\Length;
 
 #[Route('/gateau', name: 'app_cake_')]
 class CakeController extends AbstractController
@@ -59,8 +58,6 @@ class CakeController extends AbstractController
 
         return $this->renderForm('cake/index.html.twig', [
             'cakes' => $cakes,
-            'searchForm' => $searchForm,
-            'search' => $search,
             'departments' => $departmentsDisplay,
         ]);
     }

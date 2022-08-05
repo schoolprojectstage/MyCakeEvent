@@ -2,10 +2,11 @@
 
 namespace App\Controller;
 
+use App\Form\SearchOrderFormType;
 use App\Repository\CakeRepository;
 use App\Repository\OrderRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -28,9 +29,12 @@ class AdminController extends AbstractController
     }
 
     #[Route('/commandes', name: 'orders')]
-    public function ordersIndex(OrderRepository $orderRepository): Response
+    public function ordersIndex(OrderRepository $orderRepository, Request $request): Response
     {
         $orders = $orderRepository->findAll();
+
+        $searchForm = $this->createForm(SearchOrderFormType::class);
+        $searchForm->handleRequest($request);
         return $this->render('admin/orderslist.html.twig', [
             'orders' => $orders,
         ]);
