@@ -58,6 +58,8 @@ class CakeController extends AbstractController
 
         return $this->renderForm('cake/index.html.twig', [
             'cakes' => $cakes,
+            'searchForm' => $searchForm,
+            'search' => $search,
             'departments' => $departmentsDisplay,
         ]);
     }
