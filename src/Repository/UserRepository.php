@@ -42,6 +42,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
     }
 
+    public function findByRoles(string $roles): array
+    {
+        $queryBuilder = $this->createQueryBuilder('u')
+            ->where('u.roles LIKE :roles')
+            ->setParameter('roles', '%' . $roles . '%')
+            ->orderBy('u.roles', 'ASC')
+            ->getQuery();
+
+        return $queryBuilder->getResult();
+    }
+
+
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */

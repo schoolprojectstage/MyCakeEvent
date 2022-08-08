@@ -27,11 +27,11 @@ class Order
     private ?DateTimeInterface $collectDate;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'ordersToSellers')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private User $buyer;
 
     #[ORM\ManyToOne(targetEntity: Address::class, inversedBy: 'orderFromBuyer')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Address $billingAddress;
 
     #[ORM\Column(type: 'float')]

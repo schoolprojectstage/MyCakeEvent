@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\AddressRepository;
 use App\Service\OrderService;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -21,29 +22,53 @@ class OrderController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $userId = $user->getId();
+        $meetingTime = $session->get('order');
         $address = $addressRepository->findOneBy(['billingAddress' => $userId, 'status' => 1]);
 
         if (!$address) {
             $address = 'Aucune adresse renseignée.';
         }
 
-        if (isset($_POST['meeting-time'])) {
-            $session->set('order', $_POST['meeting-time']);
-        }
 
         $total = $session->get('total', []);
         $datacart = $session->get('datacart');
-        $dateorder = $session->get('order');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['meetingTime'])) {
+            $order = $_POST['meetingTime'];
+            date_default_timezone_set('Europe/Paris');
+            $orderDate = date_create($order);
+            $now = date_create();
+            $dateVerification = date_add($now, date_interval_create_from_date_string("6 days"));
+
+
+            if (!$orderDate instanceof DateTime || $orderDate == false) {
+                return $this->redirectToRoute('app_order_index');
+            }
+
+            $diff = $orderDate->diff($dateVerification);
+
+            if ($diff->invert == 0) {
+                $this->addFlash(
+                    'warning',
+                    "Merci de selectionner une autre date."
+                );
+                return $this->redirectToRoute('app_order_index');
+            }
+
+            $session->set('orderDate', $orderDate);
+            return $this->redirectToRoute('app_order_processing');
+        }
 
         return $this->render('order/index.html.twig', [
             'address' => $address,
             'total' => $total,
             'datacart' => $datacart,
-            'dateorder' => $dateorder,
+            'meetingTime' => $meetingTime,
         ]);
     }
 
-    #[Route('/validation', name: 'processing')]
+    #[
+        Route('/validation', name: 'processing')]
     public function orderProcess(SessionInterface $session): Response
     {
         return $this->render('order/processing.html.twig');
@@ -56,26 +81,21 @@ class OrderController extends AbstractController
     ): Response {
         // fetching data from session
         $datacart = $session->get('datacart');
-        $orderDate = $session->get('order');
+        $orderDate = $session->get('orderDate');
 
-        $orderDate = strval($orderDate);
-        date_default_timezone_set('Europe/Paris');
-        $orderDate = date_create($orderDate);
-        $now = date_create("now");
-
-        // TODO: could we maybe move this to index?
-        if ($now < $orderDate && $orderDate != false) {
-            // getting user
-            /** @var User $user */
-            $user = $this->getUser();
-            // calling service to add order
-            $orderService->createOrder((array)$datacart, $user, $orderDate);
-            // emptying cart
-            $orderService->emptyCart();
-            return $this->render('order/placed.html.twig');
+        if (!$orderDate instanceof DateTime || $orderDate == false) {
+            return $this->redirectToRoute('app_order_index');
         }
 
-        $this->addFlash('danger', "Veuillez sélectionner une autre date.");
-        return $this->redirectToRoute('app_order_index');
+
+        // TODO: could we maybe move this to index?
+        // getting user
+        /** @var User $user */
+        $user = $this->getUser();
+        // calling service to add order
+        $orderService->createOrder((array)$datacart, $user, $orderDate);
+        // emptying cart
+        $orderService->emptyCart();
+        return $this->render('order/placed.html.twig');
     }
 }
