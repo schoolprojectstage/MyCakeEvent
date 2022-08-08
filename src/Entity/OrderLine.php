@@ -34,7 +34,7 @@ class OrderLine
     private User $seller;
 
     #[ORM\ManyToOne(targetEntity: Address::class, inversedBy: 'orderFromSeller')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Address $deliveryAddress;
 
     public function getId(): ?int
