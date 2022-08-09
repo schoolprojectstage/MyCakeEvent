@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Form\OrderFormType;
 use App\Repository\CakeRepository;
-use App\Repository\OrderRepository;
+use App\Service\OrderSearchService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -17,7 +19,7 @@ class AdminController extends AbstractController
         return $this->render('admin/index.html.twig');
     }
 
-    #[Route('/gateaux', name: 'cakes')]
+    #[Route('/gateaux', name: 'cakes', methods: ['POST', 'GET'])]
     public function cakesIndex(CakeRepository $cakeRepository): Response
     {
         $cakes = $cakeRepository->findAll();
@@ -27,13 +29,29 @@ class AdminController extends AbstractController
     }
 
     #[Route('/commandes', name: 'orders')]
-    public function ordersIndex(OrderRepository $orderRepository): Response
-    {
+    public function ordersIndex(
+        Request $request,
+        OrderSearchService $orderSearchService
+    ): Response {
 
-        $orders = $orderRepository->findAll();
+        $searchForm = $this->createForm(OrderFormType::class);
+        $searchForm->handleRequest($request);
+        $search = "";
 
-        return $this->render('admin/orderslist.html.twig', [
+        if ($searchForm->isSubmitted() && $searchForm->isValid()) {
+            $searchRequest = $request->get('order_form');
+
+            if (is_array($searchRequest)) {
+                $search = $searchRequest['search'];
+            }
+        }
+
+        $orders = $orderSearchService->orderSearch($search);
+
+        return $this->renderForm('admin/orderslist.html.twig', [
             'orders' => $orders,
+            'searchForm' => $searchForm,
+            'search' => $search,
         ]);
     }
 }
