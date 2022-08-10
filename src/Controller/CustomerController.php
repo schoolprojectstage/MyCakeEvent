@@ -65,10 +65,10 @@ class CustomerController extends AbstractController
 
     #[Route('/modifier-mes-infos', name: 'edit')]
     public function edit(
-        Request                $request,
+        Request $request,
         EntityManagerInterface $entityManager,
-        AddressRepository      $addressRepository): Response
-    {
+        AddressRepository $addressRepository
+    ): Response {
         $address = new Address();
         $form = $this->createForm(AddressType::class, $address);
         $form->handleRequest($request);
@@ -117,8 +117,10 @@ class CustomerController extends AbstractController
         if (is_string($request->request->get('token')) || is_null($request->request->get('token'))) {
             if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('token'))) {
                 $userRepository->remove($user, true);
-                $this->addFlash('success',
-                    "Le client à bien été supprimé.");
+                $this->addFlash(
+                    'success',
+                    "Le client à bien été supprimé."
+                );
             } else {
                 throw new Exception(message: "Impossible de supprimer l'utilisateur");
             }

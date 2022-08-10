@@ -48,6 +48,36 @@ class BakerRepository extends ServiceEntityRepository
         }
     }
 
+    public function findLikeAll(mixed $search): mixed
+    {
+        $order = $this->findLikeEmail($search);
+        $order += $this->findLikeName($search);
+
+        return $order;
+    }
+
+    public function findLikeEmail(mixed $email): mixed
+    {
+        $gem = $this->getEntityManager();
+        $query = $gem->createQuery('SELECT b,u FROM App\Entity\baker b
+        INNER JOIN b.user u
+        WHERE u.email LIKE :email');
+        $query->setParameter('email', '%' . $email . '%');
+
+        return $query->getResult();
+    }
+
+    public function findLikeName(mixed $firstname): mixed
+    {
+        $gem = $this->getEntityManager();
+        $query = $gem->createQuery('SELECT b,u FROM App\Entity\baker b
+        INNER JOIN b.user u
+        WHERE u.firstname LIKE :firstname');
+        $query->setParameter('firstname', '%' . $firstname . '%');
+
+        return $query->getResult();
+    }
+
 //    /**
 //     * @return Baker[] Returns an array of Baker objects
 //     */

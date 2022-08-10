@@ -16,6 +16,11 @@
                 </div>
             {% endfor %}
         {% endfor %}
+        <div class="row d-flex justify-content-between mb-2">
+            <div class="col-xl-6 col-lg-8 col-12">
+                {{ include('components/_bakerform.html.twig') }}
+            </div>
+        </div>
         {% for baker in bakers %}
             <div id="baker-card" class="container-fluid card mb-3">
                 <div class="row m-3 g-{{ loop.index0 }}">
