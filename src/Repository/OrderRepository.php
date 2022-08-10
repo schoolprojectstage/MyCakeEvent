@@ -42,7 +42,6 @@ class OrderRepository extends ServiceEntityRepository
 
     public function findLikeAll(mixed $search): mixed
     {
-        // $order = $this->findLikeFirstName($search);
         $order = $this->findLikeEmail($search);
         $order += $this->findBy(['number' => $search]);
         return $order;

@@ -6,7 +6,9 @@ use App\Entity\Baker;
 use App\Entity\User;
 use App\Form\BakerType;
 use App\Form\BakerModifyType;
+use App\Form\SearchBakerFormType;
 use App\Repository\BakerRepository;
+use App\Service\BakerSearchService;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,13 +20,26 @@ use DateTime;
 #[Route('/patissier', name: 'app_baker_')]
 class BakerController extends AbstractController
 {
-    #[IsGranted('ROLE_ADMIN')]
     #[Route('/', name: 'index')]
-    public function index(BakerRepository $bakerRepository): Response
+    public function index(BakerSearchService $bakerSearchService, Request $request): Response
     {
-        $bakers = $bakerRepository->findAll();
-        return $this->render('baker/index.html.twig', [
+        $searchForm = $this->createForm(searchBakerFormType::class);
+        $searchForm->handleRequest($request);
+        $search = '';
+
+        if ($searchForm->isSubmitted() && $searchForm->isValid()) {
+            $searchRequest = $request->get('search_baker_form');
+            if (is_array($searchRequest)) {
+                $search = $searchRequest['search'];
+            }
+        }
+
+        $bakers = $bakerSearchService->bakerSearch($search);
+
+        return $this->renderform('baker/index.html.twig', [
             'bakers' => $bakers,
+            'searchForm' => $searchForm,
+            'search' => $search,
         ]);
     }
 
