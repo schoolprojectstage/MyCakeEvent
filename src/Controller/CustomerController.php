@@ -26,17 +26,6 @@ class CustomerController extends AbstractController
         return $this->render('customer/index.html.twig');
     }
 
-    #[IsGranted('ROLE_ADMIN')]
-    #[Route('/admin', name: 'admin_index')]
-    public function allCustomer(UserRepository $userRepository): Response
-    {
-        $roles = 'ROLE_CUSTOMER';
-        $users = $userRepository->findByRoles($roles);
-
-        return $this->render('customer/allCustomer.html.twig', [
-            'users' => $users]);
-    }
-
     #[Route('/profil', name: 'show')]
     public function show(AddressRepository $addressRepository): Response
     {
