@@ -42,6 +42,34 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
     }
 
+    public function findLikeAll(mixed $search): mixed
+    {
+        $users = $this->findLikeEmail($search);
+        $users += $this->findLikeName($search);
+
+        return $users;
+    }
+
+    public function findLikeEmail(mixed $email): mixed
+    {
+        $gem = $this->getEntityManager();
+        $query = $gem->createQuery('SELECT u FROM App\Entity\user u
+        WHERE u.email LIKE :email');
+        $query->setParameter('email', '%' . $email . '%');
+
+        return $query->getResult();
+    }
+
+    public function findLikeName(mixed $firstname): mixed
+    {
+        $gem = $this->getEntityManager();
+        $query = $gem->createQuery('SELECT u FROM App\Entity\user u
+        WHERE u.firstname LIKE :firstname');
+        $query->setParameter('firstname', '%' . $firstname . '%');
+
+        return $query->getResult();
+    }
+
     public function findByRoles(string $roles): array
     {
         $queryBuilder = $this->createQueryBuilder('u')
@@ -52,7 +80,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return $queryBuilder->getResult();
     }
-
 
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
