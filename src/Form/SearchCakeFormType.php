@@ -28,7 +28,6 @@ class SearchCakeFormType extends AbstractType
                     'choice_label' => 'displayName'
                 ]
             )
-            ->setAction('/gateau/')
             ->setMethod('POST');
     }
 
