@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Form\OrderFormType;
 use App\Repository\CakeRepository;
+use App\Repository\UserRepository;
 use App\Service\OrderSearchService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,5 +55,15 @@ class AdminController extends AbstractController
             'searchForm' => $searchForm,
             'search' => $search,
         ]);
+    }
+
+    #[Route('/customers', name: 'customers')]
+    public function allCustomer(UserRepository $userRepository): Response
+    {
+        $roles = 'ROLE_CUSTOMER';
+        $users = $userRepository->findByRoles($roles);
+
+        return $this->render('admin/customer.html.twig', [
+            'users' => $users]);
     }
 }
