@@ -29,8 +29,13 @@
                 <button class="btn btn-secondary text-white m-3">Ajouter un nouveau gâteau</button>
             </a>
         </div>
-
-        {% for cake in cakes %}
+        <div class="row d-flex justify-content-between">
+            {% if is_granted('ROLE_ADMIN') %}
+            <div class="col-xl-6 col-lg-8 col-12">
+                {{ include('components/_filterform.html.twig') }}
+            </div>
+            {% endif %}
+            {% for cake in cakes %}
             <div class="container-fluid card shadow mb-3">
                 <div class="row m-3 d-flex flex-lg-row justify-content-around">
 
@@ -94,6 +99,7 @@
                     </div>
                 </div>
             </div>
+        </div>
         {% endfor %}
     </main>
 

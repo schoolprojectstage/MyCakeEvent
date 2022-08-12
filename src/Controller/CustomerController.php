@@ -20,21 +20,11 @@ use Symfony\Component\HttpFoundation\Request;
 #[Route('/espace-client', name: 'app_customer_')]
 class CustomerController extends AbstractController
 {
+    #[IsGranted('ROLE_CUSTOMER')]
     #[Route('/', name: 'index')]
     public function index(): Response
     {
         return $this->render('customer/index.html.twig');
-    }
-
-    #[IsGranted('ROLE_ADMIN')]
-    #[Route('/admin', name: 'admin_index')]
-    public function allCustomer(UserRepository $userRepository): Response
-    {
-        $roles = 'ROLE_CUSTOMER';
-        $users = $userRepository->findByRoles($roles);
-
-        return $this->render('customer/allCustomer.html.twig', [
-            'users' => $users]);
     }
 
     #[Route('/profil', name: 'show')]
@@ -60,15 +50,15 @@ class CustomerController extends AbstractController
         $userId = $user->getId();
         $orders = $orderRepository->findBy(['buyer' => $userId], ['orderedAt' => 'DESC']);
 
-        return $this->render('admin/orderslist.html.twig', ['orders' => $orders]);
+        return $this->render('customer/orders.html.twig', ['orders' => $orders]);
     }
 
     #[Route('/modifier-mes-infos', name: 'edit')]
     public function edit(
-        Request                $request,
+        Request $request,
         EntityManagerInterface $entityManager,
-        AddressRepository      $addressRepository): Response
-    {
+        AddressRepository $addressRepository
+    ): Response {
         $address = new Address();
         $form = $this->createForm(AddressType::class, $address);
         $form->handleRequest($request);
@@ -117,8 +107,10 @@ class CustomerController extends AbstractController
         if (is_string($request->request->get('token')) || is_null($request->request->get('token'))) {
             if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('token'))) {
                 $userRepository->remove($user, true);
-                $this->addFlash('success',
-                    "Le client à bien été supprimé.");
+                $this->addFlash(
+                    'success',
+                    "Le client à bien été supprimé."
+                );
             } else {
                 throw new Exception(message: "Impossible de supprimer l'utilisateur");
             }

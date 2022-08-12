@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\Order;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -39,6 +40,23 @@ class OrderRepository extends ServiceEntityRepository
         }
     }
 
+    public function findLikeAll(mixed $search): mixed
+    {
+        $order = $this->findLikeEmail($search);
+        $order += $this->findBy(['number' => $search]);
+        return $order;
+    }
+
+    private function findLikeEmail(mixed $email): mixed
+    {
+        $gem = $this->getEntityManager();
+        $query = $gem->createQuery('SELECT o, b FROM App\Entity\order o
+        INNER JOIN o.buyer b
+        WHERE b.email LIKE :email');
+        $query->setParameter('email', '%' . $email . '%');
+
+        return $query->getResult();
+    }
 //    /**
 //     * @return Order[] Returns an array of Order objects
 //     */
