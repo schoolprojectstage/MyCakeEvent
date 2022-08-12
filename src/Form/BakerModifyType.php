@@ -16,6 +16,9 @@ class BakerModifyType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('firstname', TextType::class, [
+                'label' => "Votre nom"
+            ])
             ->add('deliveryAddress', AddressType::class, [
                 'label' => "Adresse de livraison*",
                 ])
