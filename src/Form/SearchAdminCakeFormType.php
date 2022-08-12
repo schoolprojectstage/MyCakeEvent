@@ -9,7 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SearchCakeFormType extends AbstractType
+class SearchAdminCakeFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -28,7 +28,7 @@ class SearchCakeFormType extends AbstractType
                     'choice_label' => 'displayName'
                 ]
             )
-            ->setAction('/gateau/')
+            ->setAction('/espace-admin/gateaux')
             ->setMethod('POST');
     }
 
