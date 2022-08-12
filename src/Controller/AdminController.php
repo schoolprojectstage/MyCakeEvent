@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Form\OrderFormType;
+use App\Form\SearchAdminCakeFormType;
 use App\Form\SearchCakeFormType;
 use App\Form\SearchUserFormType;
 use App\Repository\CakeRepository;
@@ -35,14 +36,14 @@ class AdminController extends AbstractController
         // fetching all departments for the scrolling menu
         $departmentsDisplay = $departmentRepository->findAll();
         // creating form
-        $searchForm = $this->createForm(SearchCakeFormType::class);
+        $searchForm = $this->createForm(SearchAdminCakeFormType::class);
         $searchForm->handleRequest($request);
         // initializing search and department variables before the form is set
         $search = "";
         $department = "";
 
         if ($searchForm->isSubmitted() && $searchForm->isValid()) {
-            $searchRequest = $request->get('search_cake_form');
+            $searchRequest = $request->get('search_admin_cake_form');
 
             // some bricolage to please phpcs
             if (is_array($searchRequest)) {
