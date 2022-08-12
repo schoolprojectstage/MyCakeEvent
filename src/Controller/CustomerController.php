@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 #[Route('/espace-client', name: 'app_customer_')]
 class CustomerController extends AbstractController
 {
+    #[IsGranted('ROLE_CUSTOMER')]
     #[Route('/', name: 'index')]
     public function index(): Response
     {

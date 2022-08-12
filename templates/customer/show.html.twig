@@ -23,21 +23,19 @@
                         <p class="mb-0">{% if address.streetNumber %}{{ address.streetNumber }}{% endif %} {{ address.streetName }}</p>
                         <p class="mb-2">{{ address.postcode }} {{ address.city }}</p>
 
+                        <a href="{{ path("app_customer_edit") }}">
+                            <button class="btn btn-secondary text-white">Modifier mon adresse</button>
+                        </a>
+
                         {% if is_granted('ROLE_BAKER') %}
                             <h5 class="mt-4 mb-0">Adresse de click & collect :</h5>
                             <p class="mb-0">{% if app.user.baker.deliveryAddress.streetNumber %}{{ app.user.baker.deliveryAddress.streetNumber }}{% endif %} {{ app.user.baker.deliveryAddress.streetName }}</p>
                             <p class="mb-2">{{ app.user.baker.deliveryAddress.postcode }} {{ app.user.baker.deliveryAddress.city }}</p>
                         {% endif %}
 
-                        {# TODO: allow bakers to modify their addresses #}
-                        {% if is_granted('ROLE_CUSTOMER') %}
-                            <a href="{{ path("app_customer_edit") }}">
-                                <button class="btn btn-secondary text-white">Modifier mon adresse</button>
-                            </a>
-                        {% endif %}
                         {% if is_granted('ROLE_BAKER') %}
                             <a href="{{ path('app_baker_edit', {'id': app.user.baker.id}) }}">
-                                <button type="button" class="btn btn-secondary text-white">Modifier mon profil
+                                <button type="button" class="btn btn-secondary text-white">Modifier mon adresse C & C
                                 </button>
                             </a>
                             <a href="{{ path('app_bakerspace_index') }}">
