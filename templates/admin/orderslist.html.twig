@@ -36,11 +36,13 @@
                             {{ message }}
                         </div>
                     {% endfor %}
+                    {% if is_granted('ROLE_ADMIN') %}
                     <div class="row d-flex justify-content-between">
                         <div class="col-xl-6 col-lg-8 col-12">
                             {{ include('components/_orderform.html.twig') }}
                         </div>
                     </div>
+                    {% endif %}
                     {% for order in orders %}
                         <div class="row d-flex justify-content-center">
                             <div class="col-12">
